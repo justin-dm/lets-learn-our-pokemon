@@ -1,0 +1,11 @@
+.header {
+  background-color: var(--header-red);
+  padding: .5em .25em;
+  display: flex;
+  align-items: center;
+}
+
+.header h1 {
+  color: #fff;
+  margin-left: 2em;
+}

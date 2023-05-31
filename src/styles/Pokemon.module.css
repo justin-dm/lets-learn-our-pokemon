@@ -1,0 +1,176 @@
+.row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.image {
+  width: 18em;
+  border-bottom-right-radius: 6em;
+  border-bottom-left-radius: 6em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 1.75em 0;
+  flex-shrink: 0;
+  flex-grow: 0;
+  box-shadow: var(--box-shadow);
+}
+
+.center {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.infoPanel {
+  padding-top: 1em;
+}
+
+.container {
+  width: auto;
+  max-width: var(--max-width);
+  margin: auto;
+}
+
+.section {
+  padding: 2em;
+}
+
+.backButton {
+  background: none;
+  border: 0;
+  font-size: 1em;
+  color: #fff;
+}
+
+.info {
+  margin: 0 1em;
+}
+
+.info .label {
+  font-size: 1em;
+  color: #999;
+}
+
+.info .value {
+  font-size: 1.25em;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+
+.normal {
+  background-color: var(--normal-color);
+}
+
+.fire {
+  background-color: var(--fire-color);
+}
+
+.water {
+  background-color: var(--water-color);
+}
+
+.grass {
+  background-color: var(--grass-color);
+}
+
+.electric {
+  background-color: var(--electric-color);
+}
+
+.ice {
+  background-color: var(--ice-color);
+}
+
+.fighting {
+  background-color: var(--fighting-color);
+}
+
+.poison {
+  background-color:  var(--poison-color);
+}
+
+.ground {
+  background-color: var(--ground-color);
+}
+
+.flying {
+  background-color: var(--flying-color);
+}
+
+.psychic {
+  background-color: var(--psychic-color);
+}
+
+.bug {
+  background-color: var(--bug-color);
+}
+
+.rock {
+  background-color: var(--rock-color);
+}
+
+.ghost {
+  background-color: var(--ghost-color);
+}
+
+.dark {
+  background-color: var(--dark-color);
+}
+
+.dragon {
+  background-color: var(--dragon-color);
+}
+
+.steel {
+  background-color: var(--steel-color);
+}
+
+.fairy {
+  background-color: var(--fairy-color);
+}
+
+.name {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.button {
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0 .25em;
+  font-size: 1.25em;
+}
+
+.stats {
+  list-style: none;
+}
+
+.stats li {
+  display: flex;
+  justify-content: space-between;
+}
+
+.stats li label {
+  margin-right: .5em;
+}
+
+.type {
+  padding: .5em;
+  border-radius: .5em;
+  margin: .5em;
+  box-shadow: var(--box-shadow);
+}
+
+.typesLabel {
+  font-weight: bold;
+}
+
+
+.abilities {
+  list-style: none;
+}

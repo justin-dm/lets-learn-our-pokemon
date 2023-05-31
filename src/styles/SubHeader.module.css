@@ -1,0 +1,48 @@
+.subHeader {
+  background-color: var(--header-red);
+  border-top: 2px solid #000;
+  padding: .5em 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.75em;
+}
+
+.subHeaderContent {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.search {
+  position: relative;
+}
+
+@media only screen and (min-width: 368px) {
+  .subHeaderContent {
+    width: 368px;
+  }
+}
+
+@media only screen and (min-width: 552px) {
+  .subHeaderContent {
+    width: 552px;
+  }
+}
+
+@media only screen and (min-width: 736px) {
+  .subHeaderContent {
+    width: 736px;
+  }
+}
+
+@media only screen and (min-width: 920px) {
+  .subHeaderContent {
+    width: 920px;
+  }
+}
+
+@media only screen and (min-width: 1104px) {
+  .subHeaderContent {
+    width: 1104px;
+  }
+}

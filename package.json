@@ -1,0 +1,41 @@
+{
+  "name": "lets-learn-our-pokemon",
+  "version": "0.1.0-alpha+001",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "jest": "jest --watch",
+    "jest:ci": "jest",
+    "cypress": "cypress open",
+    "cypress:ci": "start-server-and-test start http://localhost:3000 cypress:headless",
+    "cypress:headless": "cypress run --e2e"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.7.9",
+    "@types/node": "18.14.2",
+    "@types/react": "18.0.28",
+    "@types/react-dom": "18.0.11",
+    "apollo-server-micro": "^3.12.0",
+    "classnames": "^2.3.2",
+    "eslint": "8.35.0",
+    "eslint-config-next": "13.2.1",
+    "graphql": "^16.6.0",
+    "next": "13.2.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "4.9.5",
+    "usehooks-ts": "^2.9.1"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^14.0.0",
+    "cypress": "^12.7.0",
+    "eslint-config-prettier": "^8.7.0",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
+    "start-server-and-test": "^2.0.0"
+  }
+}

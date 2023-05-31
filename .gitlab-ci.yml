@@ -1,0 +1,156 @@
+variables:
+  APP_NAME: lets-learn-our-pokemon
+  DOCKER_BUILDKIT: 1
+  DOCKER_TLS_CERTDIR: "/certs"
+  IMAGE_TEST: $CI_REGISTRY_IMAGE/test:latest
+  IMAGE_CYPRESS: $CI_REGISTRY_IMAGE/cypress:latest
+  IMAGE_DEPLOY: $CI_REGISTRY_IMAGE/deploy:$CI_COMMIT_SHORT_SHA
+  IMAGE_STAGING: $CI_REGISTRY_IMAGE/deploy:staging
+  IMAGE_PRODUCTION: $CI_REGISTRY_IMAGE/deploy:production
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm/
+    - node_modules/
+    - .next/cache/
+
+stages:
+ - build
+ - test
+ - deploy 
+
+.base:
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker --version
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+
+.deploy:
+  image: curlimages/curl:latest
+  variables:
+    MANIFEST_PROJECT_ID: 43721975
+  script:
+    - >
+      curl 
+      -v 
+      --fail 
+      --request POST 
+      --form token=${CI_JOB_TOKEN} 
+      --form ref=main 
+      --form "variables[TARGET_APP]=${APP_NAME}" 
+      --form "variables[IMAGE_REF]=${IMAGE_DEPLOY}" 
+      --form "variables[TARGET_ENVIRONMENT]=${TARGET_ENVIRONMENT}" 
+      "${CI_API_V4_URL}/projects/${MANIFEST_PROJECT_ID}/trigger/pipeline"
+  environment:
+    name: $TARGET_ENVIRONMENT
+
+.tag:
+  extends: .base
+  script:
+    - docker pull $SOURCE_IMAGE
+    - docker tag $SOURCE_IMAGE $TARGET_IMAGE
+    - docker push $TARGET_IMAGE
+
+workflow:
+  rules:
+    - changes:
+      - src/**/*
+      - public/**/*
+      - cypress/**/*
+      - package.json
+      - package-lock.json
+      - .gitlab-ci.yml
+      - Dockerfile
+      - cypress.config.ts
+
+build:test:
+  extends: .base
+  stage: build
+  script:
+    - docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from "$IMAGE_TEST" --target builder -t "$IMAGE_TEST" .
+    - docker push "$IMAGE_TEST"
+
+build:deploy:
+  extends: .base
+  stage: build
+  needs: ["build:test"]
+  script:
+    - docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from "$IMAGE_DEPLOY" --cache-from "$IMAGE_TEST" --cache-from "$IMAGE_CYPRESS" -t "$IMAGE_DEPLOY" .
+    - docker push "$IMAGE_DEPLOY"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+build:cypress:
+  extends: .base
+  stage: build
+  needs: ["build:test"]
+  script:
+    - docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from "$IMAGE_CYPRESS" --cache-from "$IMAGE_TEST" --target cypress -t "$IMAGE_CYPRESS" .
+    - docker push "$IMAGE_CYPRESS"
+
+test:lint:
+  extends: .base
+  stage: test
+  needs: ["build:test"]
+  script:
+    - docker run "$IMAGE_TEST" npm run lint
+
+test:jest:
+  extends: .base
+  stage: test
+  needs: ["build:test"]
+  script:
+    - docker run "$IMAGE_TEST" npm run jest:ci
+
+test:cypress:
+  extends: .base
+  stage: test
+  needs: ["build:cypress"]
+  script:
+    - docker run -v ./cypress/videos:/app/cypress/videos -v ./cypress/screenshots:/app/cypress/screenshots "$IMAGE_CYPRESS" npm run cypress:ci
+  artifacts:
+    when: on_failure
+    paths:
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**/*.png
+    expire_in: 1 day
+
+deploy:staging:
+  extends: .deploy
+  stage: deploy
+  needs: ["build:deploy", "test:lint", "test:jest", "test:cypress"]
+  variables:
+    TARGET_ENVIRONMENT: staging
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+tag:staging:
+  extends: .tag
+  stage: deploy
+  needs: ["deploy:staging"]
+  variables:
+    SOURCE_IMAGE: "$IMAGE_DEPLOY"
+    TARGET_IMAGE: "$IMAGE_STAGING"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+deploy:production:
+  extends: .deploy
+  stage: deploy
+  variables:
+    TARGET_ENVIRONMENT: production 
+  rules:
+    - if: '$CI_COMMIT_TAG'
+
+tag:production:
+  extends: .tag
+  stage: deploy
+  needs: ["deploy:production"]
+  variables:
+    SOURCE_IMAGE: "$IMAGE_DEPLOY"
+    TARGET_IMAGE: "$IMAGE_PRODUCTION"
+  rules:
+    - if: '$CI_COMMIT_TAG'
