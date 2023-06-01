@@ -1,6 +1,6 @@
 {
   "name": "lets-learn-our-pokemon",
-  "version": "0.1.0-alpha+001",
+  "version": "0.1.0-alpha+002",
   "private": true,
   "scripts": {
     "dev": "next dev",
