@@ -7,12 +7,14 @@ import pokeapi from '@/utils/pokeapi';
 
 import '@/styles/globals.css';
 
+const isBrowser = () => typeof window !== 'undefined';
+
 export default function App({ Component, pageProps }: AppProps) {
   // default environment to production
   const env = process.env.NODE_ENV || 'production';
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isBrowser()) {
       datadogRum.init({
         applicationId: 'd20a4240-5e2e-4718-ab8b-03f279d48416',
         clientToken: 'pub1c190062f1773a222732e4757f7549f2',
@@ -29,7 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
       datadogRum.startSessionReplayRecording();
     }
-  }, [window]);
+  }, []);
 
   return (
     <ApolloProvider client={pokeapi}>
